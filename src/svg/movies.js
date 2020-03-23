@@ -1,28 +1,90 @@
-import harryPotterCsv from '../assets/data/harry_potter.csv';
-import harryPotterJson from "../assets/data/harry_potter.json";
-import lordOfTheRingsCsv from "../assets/data/lord_of_the_rings.csv";
+import moviesCsv from '../assets/data/movies.csv';
 import * as d3 from 'd3';
-import * as dataFetch from 'd3-fetch'
+import * as fetch from 'd3-fetch'
 
-function harryPotter() {
-    d3.csv(harryPotterCsv).then(resp => {
-      console.log("Local CSV:", resp);
+// Data Preparation
+function filterData(movies) {
+    return movies.filter(movie => {
+        return (
+            movie.release_year  > 1999 && 
+            movie.release_year < 2010 && 
+            movie.revenue > 0 && 
+            movie.budget > 0 &&
+            movie.genre &&
+            movie.title
+        );
     });
 }
 
-function movies() {
-    const potter = d3.csv(harryPotterCsv);
-    const rings = d3.csv(lordOfTheRingsCsv);
+// get the data we will use for the bar chart
+function prepareBarChartData(movieData) {
+    console.log('GETTING BAR CHART DATA');
+    const dataMap = d3.nest()
+                    .key(d => d.genre)
+                    .rollup(v => d3.sum(v, leaf => leaf.revenue))
+                    .entries(movieData);
 
-    let potterResult, ringsResult;
-    Promise.all([potter, rings])
-    .then(res => [potterResult, ringsResult] = res)
-    .then(() => {
-         console.log("POTTER:", potterResult);
-         console.log("RINGS:", ringsResult);
-    });  
+    const dataArray = Array.from(dataMap, d=> ({genre: d.key, revenue:d.value}))
+
+    return dataArray;
+}
+
+// Main Function
+function ready(movies) {
+    const moviesClean = filterData(movies);
+    const barChartData = prepareBarChartData(moviesClean).sort((a,b) => {
+        return d3.descending(a.revenue, b.revenue);
+    });
+    return barChartData;
+}
+
+// Data Utilities
+const parseNA = string => (string === 'NA' ? undefined : string);
+const parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
+
+// Type Conversion
+function type(d) {
+    const date = parseDate(d.release_date);
+    return {
+        budget: +d.budget,
+        genre:  parseNA(d.genre),
+        genres: JSON.parse(d.genres).map(d => d.name),
+        homepage: parseNA(d.homepage),
+        id: +d.id,
+        imdb_id: parseNA(d.imdb_id),
+        original_language: (d.original_language),
+        overview: parseNA(d.overview),
+        popularity: +d.popularity,
+        poster_path:parseNA(d.poster_path),
+        production_countries: JSON.parse(d.production_countries),
+        release_date:date,
+        release_year:date.getFullYear(),
+        revenue: +d.revenue,
+        runtime: +d.runtime,
+        status: d.status,
+        tagline: parseNA(d.tagline),
+        title: parseNA(d.title),
+        vote_average: +d.vote_average,
+        vote_count: +d.vote_count
+    }
+}
+
+// Load Data
+function loadMovies() {
+    return d3.csv(moviesCsv, type)
+    .then(resp => {
+        return ready(resp);
+    });
+}
+
+// Use Loaded Data
+function getMovies() {
+    return loadMovies();
 }
 
 export default function generateMovieGraphics() {
-    movies();
+   getMovies()
+   .then(movieData => {
+        console.log('TIME TO USE THE MOVIE DATA:', movieData);
+   });   
 }
