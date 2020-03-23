@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import create_lollipop from './svg/lollipop';
+import SVG from "./svg/SVG";
 
 function App() {
   return (
     <div className="App">
-      {create_lollipop()}
+      <SVG />
     </div>
   );
 }
