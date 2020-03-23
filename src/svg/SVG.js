@@ -4,7 +4,7 @@ import generateMovieGraphics from './movies';
 
 const SVG = (props) => {
     return (
-      <div>
+      <div className='bar-chart-container'>
         {/* {create_lollipop()} */}
         {generateMovieGraphics()}
       </div>
