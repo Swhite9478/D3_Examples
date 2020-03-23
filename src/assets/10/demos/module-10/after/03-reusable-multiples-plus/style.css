@@ -1,0 +1,51 @@
+body {
+  background: #10223d;
+}
+
+body,
+text {
+  font-family: 'Avenir', sans-serif;
+}
+
+text {
+  font-size: 0.8em;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+rect {
+  fill: #ffdee3;
+}
+
+text.label {
+  fill: #ccc;
+  font-weight: lighter;
+  font-size: 1em;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.header {
+  padding: 1.5em 0;
+  color: #eee;
+}
+
+h1,
+h3 {
+  margin: 0;
+}
+
+.container {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.container:last-of-type {
+  border-bottom: none;
+}

@@ -1,0 +1,18 @@
+svg {
+  border: 1px solid #ccc;
+}
+
+body,
+text {
+  font-family: 'Avenir', sans-serif;
+}
+
+text {
+  font-size: 0.7em;
+  fill: white;
+  dominant-baseline: middle;
+}
+
+rect {
+  fill: #10223d;
+}

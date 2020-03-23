@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Circle Packing</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="node_modules/d3/dist/d3.min.js"></script>
+    <script src="node_modules/d3-array/dist/d3-array.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- This is your chart's container -->
+    <div class="header">
+      <h1>The Big Six Studios and Their Films</h1>
+      <h3>Films and their revenue by selected studio 2000-2009</h3>
+    </div>
+    <div class="circle-pack-container"></div>
+
+    <!-- This is your tooltip -->
+    <div class="tooltip">
+      <table class="tip-table">
+        <tr>
+          <td>Film</td>
+          <td class="film"></td>
+        </tr>
+        <tr>
+          <td>Studio</td>
+          <td class="studio"></td>
+        </tr>
+        <tr>
+          <td>Revenue</td>
+          <td class="revenue"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Loading in your Javascript logic -->
+    <script src="app.js"></script>
+  </body>
+</html>

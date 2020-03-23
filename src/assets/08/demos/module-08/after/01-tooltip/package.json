@@ -1,0 +1,10 @@
+{
+  "name": "tooltip",
+  "version": "1.0.0",
+  "description": "Adding a tooltip to a bar chart",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^5",
+    "d3-array": "^2"
+  }
+}
