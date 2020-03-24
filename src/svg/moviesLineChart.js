@@ -47,27 +47,31 @@ function filterData(movies) {
 }
 
 // get the data we will use for the bar chart
-function prepareLineChartData(movieData) {
-    const dataArray = [...movieData];
-
-    return dataArray;
+function prepareScatterData(movieData) {
+    return movieData.sort((a,b) => d3.descending(a.budget, b.budget)).filter((d,i) => i < 100);
 }
 
 // Main Function
 function ready(movies) {
     const moviesClean = filterData(movies);
-    const lineChartData = prepareLineChartData(moviesClean);
+    const scatterData = prepareScatterData(moviesClean);
 
-    console.log('Line Chart Data:', lineChartData);
+    console.log('Line Chart Data:', scatterData);
     
 
     // Margin Convention
     const margin = { top: 80, right: 40, bottom: 40, left: 80 };
-    const width = 400 - margin.left - margin.right;
+    const width = 500 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
     // Scales
-    
+    const xScale = d3.scaleLinear()
+                .domain(d3.extent(scatterData, v => v.budget))
+                .range([0, width]);
+
+    const yScale = d3.scaleLinear()
+            .domain(d3.extent(scatterData, v => v.revenue))
+            .range([height, 0]);
 
     // Draw base
     const svg = d3.select('.chart-container')
@@ -84,6 +88,20 @@ function ready(movies) {
    
 
     // Draw Axes
+
+    // Draw Scatter
+    svg.selectAll('.scatter')
+                .append('g')
+                .attr('class', 'scatter-points')
+                .data(scatterData)
+                .enter()
+                .append('circle')
+                .attr('class', 'scatter')
+                .attr('cx', d => xScale(d.budget))
+                .attr('cy', d => yScale(d.revenue))
+                .attr('r', 3)
+                .style('fill', 'dodgerblue')
+                .style('fill-opacity', 0.7);
 }
 
 // Load Data
