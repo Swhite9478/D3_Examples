@@ -171,6 +171,7 @@ function ready(movies) {
                 .attr('r', 3)
                 .on('mouseover', function(d, i) {
                     d3.select(this)
+                    .attr('r', 10)
                     .style('fill', 'orange')
                     .style('cursor', 'pointer')
                     .append("svg:title")
@@ -179,6 +180,7 @@ function ready(movies) {
                 })
                 .on('mouseleave', function(d, i) {
                     d3.select(this)
+                    .attr('r', 3)
                     .style('fill', 'dodgerblue');
                     
                 })
