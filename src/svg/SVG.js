@@ -1,12 +1,12 @@
 import React from 'react';
 import create_lollipop from './lollipop';
-import generateMovieGraphics from './movies';
+import getMoviesBarChart from './movies';
 
 const SVG = (props) => {
     return (
       <div className='bar-chart-container'>
         {/* {create_lollipop()} */}
-        {generateMovieGraphics()}
+        {getMoviesBarChart()}
       </div>
     );
 }

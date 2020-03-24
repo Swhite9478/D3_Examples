@@ -66,7 +66,7 @@ function ready(movies) {
     });
 
     // Margin Convention
-    const margin = { top: 40, right: 40, bottom: 40, left: 40 };
+    const margin = { top: 80, right: 40, bottom: 40, left: 80 };
     const width = 400 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
@@ -90,6 +90,20 @@ function ready(movies) {
                 .append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    // Draw Header 
+    const header = svg.append('g')
+                .attr('class', 'bar-header')
+                .attr('transform', `translate(0, ${-margin.top / 2})`)
+                .append('text');
+
+    header.append('tspan').text('Total Revenue by Genre in $US');
+    header.append('tspan')
+                .text('Films w/ budget and revenue figures, 2000-2009')
+                .attr('x', 0)
+                .attr('dy', '1.5em')
+                .attr('font-size', '0.8em')
+                .attr('fill', '#555');
+
     // Draw Bars
     const bars = svg
                 .selectAll('.bar')
@@ -100,8 +114,34 @@ function ready(movies) {
                 .attr('y', d => ySCale(d.genre))
                 .attr('width', d => xScale(d.revenue))
                 .attr('height', ySCale.bandwidth())
-                .style('fill', 'dodgerblue')
+                .style('fill', 'dodgerblue');
 
+    function formatTicks(d) { 
+        return d3.format('~s')(d)
+                .replace('M', ' mil')
+                .replace('G', ' bil')
+                .replace('T', ' tril')
+    }
+
+    // Draw Axes
+    const xAxis = d3.axisTop(xScale)
+                .tickFormat(formatTicks)
+                .tickSizeInner(-height)
+                .tickSizeOuter(0);
+
+    const xAxisDraw = svg.append('g')
+                .attr('class', 'x axis')
+                .call(xAxis);
+    
+    const yAxis = d3.axisLeft(ySCale)
+                .tickSize(0);
+
+    const yAxisDraw = svg.append('g')
+                .attr('class', 'y axis')
+                .call(yAxis);
+
+    yAxisDraw.selectAll('text')
+                .attr('dx', '-0.6em')
 }
 
 // Load Data
@@ -113,10 +153,6 @@ function loadMovies() {
 }
 
 // Use Loaded Data
-function getMoviesChart() {
-    return loadMovies();
-}
-
-export default function generateMovieGraphics() {
-   getMoviesChart();
+export default function getMoviesBarChart() {
+    loadMovies();
 }
