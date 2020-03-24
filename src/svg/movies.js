@@ -77,7 +77,7 @@ function ready(movies) {
                 .domain([0, xMax])
                 .range([0, width]);
 
-    const ySCale = d3.scaleBand()
+    const yScale = d3.scaleBand()
                 .domain(barChartData.map(d => d.genre))
                 .rangeRound([0, height])
                 .paddingInner(.25);
@@ -111,9 +111,9 @@ function ready(movies) {
                 .enter()
                 .append('rect')
                 .attr('class', 'bar')
-                .attr('y', d => ySCale(d.genre))
+                .attr('y', d => yScale(d.genre))
                 .attr('width', d => xScale(d.revenue))
-                .attr('height', ySCale.bandwidth())
+                .attr('height', yScale.bandwidth())
                 .style('fill', 'dodgerblue');
 
     function formatTicks(d) { 
@@ -133,7 +133,7 @@ function ready(movies) {
                 .attr('class', 'x axis')
                 .call(xAxis);
     
-    const yAxis = d3.axisLeft(ySCale)
+    const yAxis = d3.axisLeft(yScale)
                 .tickSize(0);
 
     const yAxisDraw = svg.append('g')
