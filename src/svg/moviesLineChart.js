@@ -169,8 +169,23 @@ function ready(movies) {
                 .attr('cx', d => xScale(d.budget))
                 .attr('cy', d => yScale(d.revenue))
                 .attr('r', 3)
+                .on('mouseover', function(d, i) {
+                    d3.select(this)
+                    .style('fill', 'orange')
+                    .style('cursor', 'pointer')
+                    .append("svg:title")
+                    .text(function(d) { return d.title; })
+                    
+                })
+                .on('mouseleave', function(d, i) {
+                    d3.select(this)
+                    .style('fill', 'dodgerblue');
+                    
+                })
                 .style('fill', 'dodgerblue')
+
                 .style('fill-opacity', 0.7);
+   
 }
 
 // Load Data
