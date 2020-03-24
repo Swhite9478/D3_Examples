@@ -17,9 +17,16 @@ svg {
 }
 
 .axis .domain {
-  stroke: none;
+  stroke: #bbb;
+}
+
+.axis .tick line {
+  stroke: #bbb;
+  stroke-width: 0.5;
+  stroke-dasharray: 4, 2;
 }
 
 .x line {
-  stroke: white;
+  stroke: black;
 }
+

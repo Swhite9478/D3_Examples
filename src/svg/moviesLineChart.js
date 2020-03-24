@@ -60,17 +60,23 @@ function ready(movies) {
     
 
     // Margin Convention
-    const margin = { top: 80, right: 40, bottom: 40, left: 80 };
-    const width = 500 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const margin = { top: 80, right: 40, bottom: 40, left: 60 };
+    const width = 650 - margin.left - margin.right;
+    const height = 650 - margin.top - margin.bottom;
 
     // Scales
+    const xExtent = d3.extent(scatterData, v => v.budget)
+                .map((d, i) => i === 0 ? d * 0.95 : d * 1.05);
+
     const xScale = d3.scaleLinear()
-                .domain(d3.extent(scatterData, v => v.budget))
+                .domain(xExtent)
                 .range([0, width]);
 
+    const yExtent = d3.extent(scatterData, v => v.revenue)
+        .map((d, i) => i === 0 ? d * 0.1 : d * 1.1);
+
     const yScale = d3.scaleLinear()
-            .domain(d3.extent(scatterData, v => v.revenue))
+            .domain(yExtent)
             .range([height, 0]);
 
     // Draw base
@@ -82,12 +88,75 @@ function ready(movies) {
                 .attr('transform', `translate(${margin.left},${margin.top})`);    
 
     // Draw Header 
+    const header = svg.append('g')
+                .attr('class', 'bar-header')
+                .attr('transform', `translate(0, ${-margin.top / 2})`)
+                .append('text');
+
+    header.append('tspan').text('Budget vs Revenue in \$US')
+                .attr('dx', `${(width - margin.left - margin.right) / 2.5}`);
+
+    header.append('tspan')
+                .text('Top 100 films by budget, 2000-2009')
+                .attr('x', 0)
+                .attr('dy', '1.5em')
+                .attr('dx', `${(width - margin.left - margin.right) / 2.7}`)
+                .attr('font-size', '0.8em')
+                .attr('fill', '#555');
     
 
     // Draw Bars
    
 
+    function formatTicks(d) { 
+        return d3.format('~s')(d)
+                .replace('M', ' mil')
+                .replace('G', ' bil')
+                .replace('T', ' tril')
+    }
+
+    function addLabel(axis, label, xVal, yVal) {
+        const newLabel = axis.selectAll('.tick:last-of-type text')
+                .clone()
+                .text(label)
+                .attr('x', xVal)
+                .attr('y', yVal)
+                .style('text-anchor', 'start')
+                .style('font-weight', 'bold')
+                .style('fill', '#555');
+
+        if (label === 'Revenue') {
+            newLabel.attr('transform', 'rotate(-90)');
+        }
+    }
+
     // Draw Axes
+    const xAxis = d3.axisBottom(xScale)
+                .ticks(5)
+                .tickFormat(formatTicks)
+                .tickSizeInner(-height)
+                .tickSizeOuter(0);
+
+    const xAxisDraw = svg.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', `translate(0, ${height})`)
+                .call(xAxis)
+                .call(addLabel, 'Budget',( -width + margin.left + margin.right)/2, 20);
+
+    const yAxis = d3.axisLeft(yScale)
+                .ticks(5)
+                .tickFormat(formatTicks)
+                .tickSizeInner(-height)
+                .tickSizeOuter(0);
+
+    const yAxisDraw = svg.append('g')
+                .attr('class', 'y axis')
+                .attr('transform', `translate(0, 0)`)
+                .call(yAxis)
+                .call(addLabel, 'Revenue', (-height + margin.top + margin.bottom)/2, -50);
+    
+    yAxisDraw.selectAll('text')
+        .attr('dx', '-0.6em'); 
 
     // Draw Scatter
     svg.selectAll('.scatter')
