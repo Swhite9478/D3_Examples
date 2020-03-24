@@ -83,7 +83,7 @@ function ready(movies) {
                 .paddingInner(.25);
 
     // Draw base
-    const svg = d3.select('.bar-chart-container')
+    const svg = d3.select('.chart-container')
                 .append('svg')
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)

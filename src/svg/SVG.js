@@ -5,7 +5,7 @@ import getMoviesLineChart from './moviesLineChart';
 
 const SVG = (props) => {
     return (
-      <div className='bar-chart-container'>
+      <div className='chart-container'>
         {/* {create_lollipop()} */}
         {/* {getMoviesBarChart()} */}
         {getMoviesLineChart()}
