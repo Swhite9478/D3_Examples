@@ -191,6 +191,39 @@ function ready(movies) {
                 .style('stroke', d => d.color)
                 .style('stroke-width', '0.2em');
 
+    // Draw Data Points
+    function formatDollars(number) {
+        return '$' + new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(number);
+    }
+
+    chartGroup.append('g')
+                .attr('class', 'data-points')
+                .selectAll('data-point')
+                .data(timeSeriesData.series.map(d => d.values).flat())
+                .enter()
+                .append('circle')
+                .attr('cx', d => xScale(d.date))
+                .attr('cy', d => yScale(d.value))
+                .attr('r', 3)
+                .style('fill', 'black')
+                .style('fill-opacity', 0.7)
+                .on('mouseover', function(d, i) {
+                    d3.select(this)
+                    .attr('r', 10)
+                    .style('fill', '#00f541')
+                    .style('cursor', 'pointer')
+                    .style('fill-opacity', .8)
+                    .append("svg:title")
+                    .text(d =>  formatDollars(d.value))
+                })
+                .on('mouseleave', function(d, i) {
+                    d3.select(this)
+                    .attr('r', 3)
+                    .style('fill', 'black')
+                    .style('fill-opacity', 0.7)                    
+                });
+
+
     // Add series label
     chartGroup.append('g')
                 .attr('class', 'series-labels')
