@@ -26,22 +26,34 @@ class Fruits extends Component {
         this.state.svg.selectAll('text')
             .data(dataset, d => d)
             .join(
-                enter => enter
+                enter => {
+                    enter
                     .append('text')
                     .text(d => d)
-                    .attr('x', 30)
+                    .attr('x', -100)
                     .attr('y', (d, i) => i * 30 + 50)
                     .style('font-weight', 'bold')
-                    .style('fill', 'dodgerblue'),
+                    .style('fill', 'dodgerblue')
+                    .transition()
+                    .attr('x', 30)
+                },
 
-                update => update
+                update => {
+                    update
+                    .transition()
                     .style('font-weight', 'bold')
                     .style('fill', 'gray')
                     .attr('y', (d, i) => i * 30 + 50)
-                    ,
+                },
 
-                exit => exit.remove()
-            )
+                exit => {
+                    exit
+                    .transition()
+                    .style('fill', 'red')
+                    .attr('x', this.state.width)
+                    .remove()
+                }
+            );
     }
 
     // Click Handler
