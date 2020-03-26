@@ -10,7 +10,7 @@ const SVG = (props) => {
         {/* {create_lollipop()} */}
         {/* {getMoviesBarChart()} */}
         {/* {getMoviesLineChart()} */}
-        {getMoviesTimeSeriesChart()}
+        {/* {getMoviesTimeSeriesChart()} */}
       </div>
     );
 }

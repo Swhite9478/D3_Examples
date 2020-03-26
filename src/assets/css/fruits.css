@@ -1,0 +1,33 @@
+h3 {
+    font-weight: 100;
+    color: #555;
+    margin: 0.4rem 0;
+}
+
+svg {
+    border: 1px solid #ccc;
+}
+
+.multiState {
+    margin: auto;
+    width: 165px;
+}
+
+button {
+    outline: none;
+    color: #555;
+    border-color: #eee;
+    background: #fefefe;
+    padding: 3px 10px;
+    font-family: Avenir;
+    font-size: .7em;
+    transition: all 200ms;
+}
+
+button:hover {
+    background: #f7f7f7;
+}
+
+button:focus {
+    background: #e7e7e7;
+}
