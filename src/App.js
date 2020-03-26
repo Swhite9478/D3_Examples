@@ -7,8 +7,8 @@ import Transition from './updatePattern/Transition';
 function App() {
   return (
     <div className="App">
-      {/* <SVG /> */}
-      <Fruits />
+      <SVG />
+      {/* <Fruits /> */}
       {/* <Transition /> */}
     </div>
   );

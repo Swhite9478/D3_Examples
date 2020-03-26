@@ -1,5 +1,5 @@
 import React from 'react';
-import create_lollipop from './lollipop';
+import Lollipop from './lollipop';
 import getMoviesBarChart from './moviesBarChart';
 import getMoviesLineChart from './moviesLineChart';
 import getMoviesTimeSeriesChart from './moviesTimeSeriesChart';
@@ -7,7 +7,7 @@ import getMoviesTimeSeriesChart from './moviesTimeSeriesChart';
 const SVG = (props) => {
     return (
       <div className='chart-container'>
-        {/* {create_lollipop()} */}
+        <Lollipop />
         {/* {getMoviesBarChart()} */}
         {/* {getMoviesLineChart()} */}
         {/* {getMoviesTimeSeriesChart()} */}
