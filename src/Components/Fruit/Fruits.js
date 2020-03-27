@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import '../assets/css/fruits.css';
+import '../../assets/css/fruits.css';
 
 class Fruits extends Component {
     constructor(props) {

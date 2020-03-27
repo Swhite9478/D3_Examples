@@ -5,8 +5,8 @@ import Lollipop from './Components//Lollipop/lollipop';
 import MovieBarChart from './Components/BarChart/moviesBarChart';
 import MovieLineChart from './Components/LineChart/moviesLineChart';
 import MovieTimeSeriesChart from './Components/TimeSeriesChart/moviesTimeSeriesChart';
-import Fruits from './updatePattern/Fruits';
-import Transition from './updatePattern/Transition';
+import Fruits from './Components/Fruit/Fruits';
+import Transition from './Components/Transition/Transition';
 
 function App() {
   return (
