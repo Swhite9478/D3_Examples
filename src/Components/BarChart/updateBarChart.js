@@ -8,9 +8,14 @@ export default class UpdateBarChart extends Component {
         this.loadMovies();
     }
 
-    // Data Utilities
-    parseNA = string => (string === 'NA' ? undefined : string);
-    parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
+    render() {
+        return <div className='barChart' />
+    }
+
+    loadMovies() {
+        d3.csv(moviesCsv, this.type.bind(this))
+        .then(resp => this.ready.bind(this)(resp));
+    }
 
     // Type Conversion
     type(d) {
@@ -38,33 +43,6 @@ export default class UpdateBarChart extends Component {
             vote_count: +d.vote_count
         }
     }
-
-    // Data Preparation
-    filterData(movies) {
-        return movies.filter(movie => {
-            return (
-                movie.release_year  > 1999 && 
-                movie.release_year < 2010 && 
-                movie.revenue > 0 && 
-                movie.budget > 0 &&
-                movie.genre &&
-                movie.title
-            );
-        });
-    }
-
-    // get the data we will use for the bar chart
-    prepareBarChartData(movieData) {
-        const dataMap = d3.nest()
-                        .key(d => d.genre)
-                        .rollup(v => d3.sum(v, leaf => leaf.revenue))
-                        .entries(movieData);
-
-        const dataArray = Array.from(dataMap, d=> ({genre: d.key, revenue:d.value}))
-
-        return dataArray;
-    }
-
 
     // Main Function
     ready(movies) {
@@ -108,12 +86,33 @@ export default class UpdateBarChart extends Component {
         
     }
 
-    loadMovies() {
-        d3.csv(moviesCsv, this.type.bind(this))
-        .then(resp => this.ready.bind(this)(resp));
+    // Data Utilities
+    parseNA = string => (string === 'NA' ? undefined : string);
+    parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
+
+    // Data Preparation
+    filterData(movies) {
+        return movies.filter(movie => {
+            return (
+                movie.release_year  > 1999 && 
+                movie.release_year < 2010 && 
+                movie.revenue > 0 && 
+                movie.budget > 0 &&
+                movie.genre &&
+                movie.title
+            );
+        });
     }
 
-    render() {
-        return <div className='barChart' />
-    }
+    // get the data we will use for the bar chart
+    prepareBarChartData(movieData) {
+        const dataMap = d3.nest()
+                        .key(d => d.genre)
+                        .rollup(v => d3.sum(v, leaf => leaf.revenue))
+                        .entries(movieData);
+
+        const dataArray = Array.from(dataMap, d=> ({genre: d.key, revenue:d.value}))
+
+        return dataArray;
+    }    
 }
