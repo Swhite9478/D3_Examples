@@ -40,7 +40,13 @@ export default class ToolTipBarChart extends Component {
         return (
             <div className='updateBarChartComponent'>
                 <div className='barChart' />
-                <div className='tooltip' />
+                <div className='tooltip'>
+                    <div className='tip-header'>
+                        <h3></h3>
+                        <h4></h4>
+                    </div>
+                    <div className='tip-body'></div>
+                </div>
                 <div className='controls'>
                     <button value='revenue'>Revenue</button>
                     <button value='budget'>Budget</button>
@@ -122,6 +128,50 @@ export default class ToolTipBarChart extends Component {
             return string.length  < 35 ? string : string.substring(0, 35) + '...';
         }
 
+        // Tooltip handler
+        function mouseover(d) {
+            // Get data
+            const barData = d3.select(this).data()[0];
+
+            const bodyData = [
+                ['Budget', formatTicks(barData.budget)],
+                ['Revenue', formatTicks(barData.revenue)],
+                ['Profit', formatTicks(barData.revenue - barData.budget)],
+                ['TMDb Popularity', Math.round(barData.popularity)],
+                ['IMDb Rating', barData.vote_average],
+                ['Genres', barData.genres.join(', ')],
+            ]
+
+            d3.select('.tooltip')
+            .style('left', `${d3.event.clientX + 15}` + 'px')
+            .style('top', d3.event.clientY + 'px')
+            .transition()
+
+            .style('opacity', 0.98)
+            
+            d3.select('.tooltip').select('h3').html(`${barData.title}, ${barData.release_year}`)
+            d3.select('.tooltip').select('h4').html(`${barData.tagline} ${barData.runtime} min.`)
+
+            d3.select('.tip-body')
+                .selectAll('p')
+                .data(bodyData)
+                .join('p')
+                .attr('class', 'tip-info')
+                .html(d => `${d[0]}: ${d[1]}`)
+
+        }
+
+        function mousemove(d) {
+            d3.select('.tooltip')
+            .style('left', `${d3.event.clientX + 15}` + 'px')
+            .style('top', d3.event.clientY + 'px')
+        }
+
+        function mouseout(d) {
+            d3.select('.tooltip')
+            .transition()
+            .style('opacity', 0)
+        }
 
         function update(data) {
             // update scales
@@ -172,6 +222,12 @@ export default class ToolTipBarChart extends Component {
 
             // update header
             headline.text(`Total ${metric} by Title ${metric === 'popularity' ? '' : 'in $US'}`);
+
+             // Add tooltip
+            d3.selectAll('.bar')
+            .on('mouseover', mouseover)
+            .on('mousemove', mousemove)
+            .on('mouseout', mouseout);
         }
 
         const moviesClean = this.filterData(movies);
@@ -209,7 +265,7 @@ export default class ToolTipBarChart extends Component {
 
 
         function formatTicks(d) { 
-            return d3.format('~s')(d)
+            return d3.format('.2~s')(d)
             .replace('M', ' mil')
             .replace('G', ' bil')
             .replace('T', ' tril')
@@ -234,35 +290,5 @@ export default class ToolTipBarChart extends Component {
         update.bind(this)(revenueData);
 
         d3.selectAll('button').on('click', handleClick);
-
-        // Tooltip handler
-        function mouseover(d) {
-            tip
-            .style('left', `${d3.event.clientX + 15}` + 'px')
-            .style('top', d3.event.clientY + 'px')
-            .style('opacity', 0.98)
-            .html('Hello Tip!')
-            
-        }
-
-        function mousemove(d) {
-            tip
-            .style('left', `${d3.event.clientX + 15}` + 'px')
-            .style('top', d3.event.clientY + 'px')
-        }
-
-        function mouseout(d) {
-            tip
-            .transition()
-            .duration(200)
-            .style('opacity', 0)
-        }
-
-        // Add tooltip
-        const tip = d3.select('.tooltip');
-        d3.selectAll('.bar')
-            .on('mouseover', mouseover)
-            .on('mousemove', mousemove)
-            .on('mouseout', mouseout);
     }
 }

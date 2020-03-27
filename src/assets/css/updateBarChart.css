@@ -38,4 +38,45 @@ button:focus {
 .tooltip {
   position: fixed;
   opacity: 0;
+  pointer-events: none;
+  background: #eee;
+  max-width: 200px;
+}
+
+.tip-header {
+  border-bottom: 2px solid white;
+  padding: 0.9em 1rem;
+}
+
+.tip-body {
+  padding: 0.2em 0;
+}
+
+body, text {
+  font-family: 'Avenir', sans-serif;
+}
+
+h3,
+h4 {
+  font-size: 0.9em;
+  color: #555;
+  margin: 0;
+}
+
+h3 { 
+  font-weight: bold;
+}
+
+h4 {
+  font-weight: normal;
+}
+
+.tip-info {
+  margin: 0;
+  padding: 0.3em 1em;
+  font-size: 0.8em;
+}
+
+.tip-info:nth-of-type(even) {
+  background: #e0e0e0;
 }
