@@ -87,6 +87,7 @@ export default class UpdateBarChart extends Component {
 
     // Main Function
     ready(movies) {
+        const svg = this.state.svg;
         const moviesClean = this.filterData(movies);
         const barChartData = this.prepareBarChartData(moviesClean).sort((a,b) => {
             return d3.descending(a.revenue, b.revenue);

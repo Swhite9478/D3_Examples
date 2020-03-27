@@ -12,6 +12,7 @@ button {
     font-family: Avenir;
     font-size: .7em;
     transition: all 200ms;
+    cursor: pointer;
 }
 
 button:hover {
@@ -21,3 +22,15 @@ button:hover {
 button:focus {
     background: #e7e7e7;
 }
+
+.axis .domain {
+    stroke: #bbb;
+  }
+  
+  .axis .domain {
+    stroke: none;
+  }
+  
+  .x .tick line {
+    stroke: white;
+  }
