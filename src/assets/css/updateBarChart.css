@@ -27,10 +27,15 @@ button:focus {
     stroke: #bbb;
   }
   
-  .axis .domain {
-    stroke: none;
-  }
-  
-  .x .tick line {
-    stroke: white;
-  }
+.axis .domain {
+  stroke: none;
+}
+
+.x .tick line {
+  stroke: white;
+}
+
+.tooltip {
+  position: fixed;
+  opacity: 0;
+}

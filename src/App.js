@@ -8,11 +8,13 @@ import MovieTimeSeriesChart from './Components/TimeSeriesChart/moviesTimeSeriesC
 import Fruits from './Components/Fruit/Fruits';
 import Transition from './Components/Transition/Transition';
 import UpdateMovieBarChart from './Components/BarChart/updateBarChart';
+import ToolTipBarChart from './Components/BarChart/toolTipBarChart';
 
 function App() {
   return (
     <div className="App">
-      <UpdateMovieBarChart />
+      <ToolTipBarChart />
+      {/* <UpdateMovieBarChart /> */}
       {/* <Lollipop />
       <MovieBarChart />
       <MovieLineChart />
