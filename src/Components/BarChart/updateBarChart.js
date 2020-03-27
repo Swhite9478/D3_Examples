@@ -1,21 +1,62 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import moviesCsv from '../../assets/data/movies.csv';
+import '../../assets/css/updateBarChart.css';
 
 export default class UpdateBarChart extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            width: props.width ? props.width : 500,
+            height: props.height ? props.height : 500,
+            margin: {
+                top: props.marginTop ? props.top : 80,
+                right: props.marginRight ? props.right : 40,
+                bottom: props.marginBottom ? props.bottom : 40,
+                left: props.marginLeft ? props.left : 80
+            }
+        }
+    }
+
     componentDidMount() {
+        this.setState({svg: this.drawSvgBase()})
         this.loadMovies();
     }
 
+    drawSvgBase() {
+        // Margin Convention
+        const svg = d3.select('.barChart')
+            .append('svg')
+            .attr('width', this.state.width + this.state.margin.left + this.state.margin.right)
+            .attr('height', this.state.height + this.state.margin.top + this.state.margin.bottom)
+            .append('g')
+            .attr('transform', `translate(${this.state.margin.left},${this.state.margin.top})`);
+        return svg;
+    }
+
     render() {
-        return <div className='barChart' />
+        return (
+            <div className='updateBarChartComponent'>
+                <div className='barChart' />
+                <div className='controls'>
+                    <button value='revenue' onClick={this.handleClick.bind(this)}>Revenue</button>
+                    <button value='budget' onClick={this.handleClick.bind(this)}>Budget</button>
+                    <button value='popularity' onClick={this.handleClick.bind(this)}>Popularity</button>
+                </div>
+            </div>
+        );
     }
 
     loadMovies() {
         d3.csv(moviesCsv, this.type.bind(this))
         .then(resp => this.ready.bind(this)(resp));
     }
+
+    // Data Utilities
+    parseNA = string => (string === 'NA' ? undefined : string);
+    parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
 
     // Type Conversion
     type(d) {
@@ -51,30 +92,19 @@ export default class UpdateBarChart extends Component {
             return d3.descending(a.revenue, b.revenue);
         });
 
-        // Margin Convention
-        const margin = { top: 80, right: 40, bottom: 40, left: 80 };
-        const width = 650 - margin.left - margin.right;
-        const height = 650 - margin.top - margin.bottom;
 
         // Scales
         const xMax = d3.max(barChartData, v => v.revenue);
 
         const xScale = d3.scaleLinear()
-                    .domain([0, xMax])
-                    .range([0, width]);
+            .domain([0, xMax])
+            .range([0,  this.state.width]);
 
         const yScale = d3.scaleBand()
-                    .domain(barChartData.map(d => d.genre))
-                    .rangeRound([0, height])
-                    .paddingInner(.25);
+            .domain(barChartData.map(d => d.genre))
+            .rangeRound([0,  this.state.height])
+            .paddingInner(.25);
 
-        // Draw base
-        const svg = d3.select('.barChart')
-                    .append('svg')
-                    .attr('width', width + margin.left + margin.right)
-                    .attr('height', height + margin.top + margin.bottom)
-                    .append('g')
-                    .attr('transform', `translate(${margin.left},${margin.top})`);
 
         // Draw Header 
      
@@ -86,9 +116,36 @@ export default class UpdateBarChart extends Component {
         
     }
 
-    // Data Utilities
-    parseNA = string => (string === 'NA' ? undefined : string);
-    parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
+    handleClick(event) {
+        this.update(event.target.value);
+    }
+
+    // Update Handler
+    update(dataset) {
+        this.state.svg.selectAll('text')
+            .data(dataset, d => d)
+            .join(
+                enter => {
+                    enter
+                    .append('text')
+                    
+                },
+
+                update => {
+                    update
+                    .append('text')
+                    
+                },
+
+                exit => {
+                    exit
+                    .append('text')
+                    
+                }
+            );
+    }
+
+    
 
     // Data Preparation
     filterData(movies) {
