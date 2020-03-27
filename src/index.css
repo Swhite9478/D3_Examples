@@ -16,15 +16,15 @@ svg {
     border: 1px solid #bbb;
 }
 
-.axis .domain {
+/* .axis .domain {
   stroke: #bbb;
-}
-
+} */
+/* 
 .axis .tick line {
   stroke: #bbb;
   stroke-width: 0.5;
   stroke-dasharray: 4, 2;
-}
+} */
 
 .x line {
   stroke: black;

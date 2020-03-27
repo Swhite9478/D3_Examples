@@ -41,9 +41,9 @@ export default class UpdateBarChart extends Component {
             <div className='updateBarChartComponent'>
                 <div className='barChart' />
                 <div className='controls'>
-                    <button value='revenue' onClick={this.handleClick.bind(this)}>Revenue</button>
-                    <button value='budget' onClick={this.handleClick.bind(this)}>Budget</button>
-                    <button value='popularity' onClick={this.handleClick.bind(this)}>Popularity</button>
+                    <button value='revenue'>Revenue</button>
+                    <button value='budget'>Budget</button>
+                    <button value='popularity'>Popularity</button>
                 </div>
             </div>
         );
@@ -57,7 +57,6 @@ export default class UpdateBarChart extends Component {
     // Data Utilities
     parseNA = string => (string === 'NA' ? undefined : string);
     parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
-    cutText = string => string.length  < 35 ? string : string.substring(0, 35) + '...';
 
     // Type Conversion
     type(d) {
@@ -86,112 +85,6 @@ export default class UpdateBarChart extends Component {
         }
     }
 
-   // Main Function
-   ready(movies) {
-        const svg = this.state.svg;
-        const moviesClean = this.filterData(movies);
-        const revenueData = moviesClean
-            .sort((a,b) => b.revenue - a.revenue)
-            .filter((d, i) => i < 15);
-
-        // Scales
-        const xMax = d3.max(revenueData, v => v.revenue);
-
-        const xScale = d3.scaleLinear()
-                    .domain([0, xMax])
-                    .range([0, this.state.width]);
-
-        const yScale = d3.scaleBand()
-                    .domain(revenueData.map(d => this.cutText(d.title)))
-                    .rangeRound([0, this.state.height])
-                    .paddingInner(.25);
-
-        // Draw Header 
-        const header = svg.append('g')
-                    .attr('class', 'bar-header')
-                    .attr('transform', `translate(0, ${-this.state.margin.top / 2})`)
-                    .append('text');
-
-        const headline = header.append('tspan').text('Total Revenue by Title in $US');
-
-        header.append('tspan')
-                    .text('Top 15 Films, 2000-2009')
-                    .attr('x', 0)
-                    .attr('dy', '1.5em')
-                    .attr('font-size', '0.8em')
-                    .attr('fill', '#555');
-
-        // Draw Bars
-        const bars = svg
-                    .selectAll('.bar')
-                    .data(revenueData)
-                    .enter()
-                    .append('rect')
-                    .attr('class', 'bar')
-                    .attr('y', d => yScale(this.cutText(d.title)))
-                    .attr('width', d => xScale(d.revenue))
-                    .attr('height', yScale.bandwidth())
-                    .style('fill', 'dodgerblue');
-
-        function formatTicks(d) { 
-            return d3.format('~s')(d)
-                    .replace('M', ' mil')
-                    .replace('G', ' bil')
-                    .replace('T', ' tril')
-        }
-
-        // Draw Axes
-        const xAxis = d3.axisTop(xScale)
-                    .tickFormat(formatTicks)
-                    .tickSizeInner(-this.state.height)
-                    .tickSizeOuter(0);
-
-        const xAxisDraw = svg.append('g')
-                    .attr('class', 'x axis')
-                    .call(xAxis);
-        
-        const yAxis = d3.axisLeft(yScale)
-                    .tickSize(0);
-
-        const yAxisDraw = svg.append('g')
-                    .attr('class', 'y axis')
-                    .call(yAxis);
-
-        yAxisDraw.selectAll('text')
-                    .attr('dx', '-0.6em')
-    }
-
-    handleClick(event) {
-        this.update(event.target.value);
-    }
-
-    // Update Handler
-    update(dataset) {
-        this.state.svg.selectAll('text')
-            .data(dataset, d => d)
-            .join(
-                enter => {
-                    enter
-                    .append('text')
-                    
-                },
-
-                update => {
-                    update
-                    .append('text')
-                    
-                },
-
-                exit => {
-                    exit
-                    .append('text')
-                    
-                }
-            );
-    }
-
-    
-
     // Data Preparation
     filterData(movies) {
         return movies.filter(movie => {
@@ -205,4 +98,139 @@ export default class UpdateBarChart extends Component {
             );
         });
     }
+
+   // Main Function
+   ready(movies) {
+        const svg = this.state.svg;
+        var metric = 'revenue';
+
+        function handleClick() {
+            console.log(this.value);
+            metric = this.value;
+
+            const updatedData  = moviesClean
+                .sort((a,b) => b[metric] - a[metric])
+                .filter((d,i) => i < 15);
+
+            update(updatedData);
+        } 
+
+        function cutText(string) { 
+            return string.length  < 35 ? string : string.substring(0, 35) + '...';
+        }
+
+
+        function update(data) {
+            // update scales
+            xScale.domain([0, d3.max(data, d => d[metric])])
+            yScale.domain(data.map(d => cutText(d.title)))
+
+            // Set up transition
+            const dur = 1000;
+            const t = d3.transition().duration(dur).delay((d,i) => i * 20)
+
+            // update bars
+            bars
+            .selectAll('.bar')
+            .data(data, d => d.title)
+            .join(
+                enter => {
+                    enter
+                    .append('rect')
+                    .attr('class', 'bar')
+                    .attr('y', d => yScale(cutText(d.title)))
+                    .attr('height', yScale.bandwidth())
+                    .style('fill', 'lightcyan')
+                    .transition(t)
+                    .attr('width', d => xScale(d[metric]))
+                    .style('fill', 'dodgerblue')
+                    },
+
+                update =>{ 
+                    update 
+                    .transition(t)
+                    .attr('y', d => yScale(cutText(d.title)))                    
+                    .attr('width', d => xScale(d[metric]))
+                    },
+
+                exit =>
+                    exit
+                    .transition()
+                    .duration(dur/2)
+                    .style('fill-opacity', 0)
+                    .remove()
+            )
+
+            // update axes
+            xAxisDraw.transition(t).call(xAxis.scale(xScale));
+            yAxisDraw.transition(t).call(yAxis.scale(yScale));
+
+            yAxisDraw.selectAll('text').attr('dx', '-0.6em');
+
+            // update header
+            headline.text(`Total ${metric} by Title ${metric === 'popularity' ? '' : 'in $US'}`);
+        }
+
+        const moviesClean = this.filterData(movies);
+        const revenueData = moviesClean
+            .sort((a,b) => b.revenue - a.revenue)
+            .filter((d, i) => i < 15);
+
+        // Scales
+        const xScale = d3.scaleLinear()
+            .range([0, this.state.width]);
+
+        const yScale = d3.scaleBand()
+            .rangeRound([0, this.state.height])
+            .paddingInner(.25);
+
+        // Draw Header 
+        const header = svg.append('g')
+            .attr('class', 'bar-header')
+            .attr('transform', `translate(0, ${-this.state.margin.top / 2})`)
+            .append('text');
+
+        const headline = header.append('tspan').text('Total Revenue by Title in $US');
+
+        header.append('tspan')
+            .text('Top 15 Films, 2000-2009')
+            .attr('x', 0)
+            .attr('dy', '1.5em')
+            .attr('font-size', '0.8em')
+            .attr('fill', '#555');
+
+        // Draw Bars
+        const bars = svg
+            .append('g')
+            .attr('class', 'bars');
+
+
+        function formatTicks(d) { 
+            return d3.format('~s')(d)
+            .replace('M', ' mil')
+            .replace('G', ' bil')
+            .replace('T', ' tril')
+        }
+
+        // Draw Axes
+        const xAxis = d3.axisTop(xScale)
+            .tickFormat(formatTicks)
+            .ticks(5)
+            .tickSizeInner(-this.state.height)
+            .tickSizeOuter(0);
+
+        const xAxisDraw = svg.append('g')
+            .attr('class', 'x axis')
+        
+        const yAxis = d3.axisLeft(yScale)
+            .tickSize(0);
+
+        const yAxisDraw = svg.append('g')
+            .attr('class', 'y axis')
+
+        update.bind(this)(revenueData);
+
+        d3.selectAll('button').on('click', handleClick);
+    }
+
 }
