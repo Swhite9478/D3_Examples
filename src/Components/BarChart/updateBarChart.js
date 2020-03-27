@@ -9,13 +9,13 @@ export default class UpdateBarChart extends Component {
         super(props);
 
         this.state = {
-            width: props.width ? props.width : 500,
+            width: props.width ? props.width : 600,
             height: props.height ? props.height : 500,
             margin: {
                 top: props.marginTop ? props.top : 80,
                 right: props.marginRight ? props.right : 40,
                 bottom: props.marginBottom ? props.bottom : 40,
-                left: props.marginLeft ? props.left : 80
+                left: props.marginLeft ? props.left : 200
             }
         }
     }
@@ -57,6 +57,7 @@ export default class UpdateBarChart extends Component {
     // Data Utilities
     parseNA = string => (string === 'NA' ? undefined : string);
     parseDate = string => d3.timeParse('%Y-%m-%d')(string); 
+    cutText = string => string.length  < 35 ? string : string.substring(0, 35) + '...';
 
     // Type Conversion
     type(d) {
@@ -85,36 +86,79 @@ export default class UpdateBarChart extends Component {
         }
     }
 
-    // Main Function
-    ready(movies) {
+   // Main Function
+   ready(movies) {
         const svg = this.state.svg;
         const moviesClean = this.filterData(movies);
-        const barChartData = this.prepareBarChartData(moviesClean).sort((a,b) => {
-            return d3.descending(a.revenue, b.revenue);
-        });
-
+        const revenueData = moviesClean
+            .sort((a,b) => b.revenue - a.revenue)
+            .filter((d, i) => i < 15);
 
         // Scales
-        const xMax = d3.max(barChartData, v => v.revenue);
+        const xMax = d3.max(revenueData, v => v.revenue);
 
         const xScale = d3.scaleLinear()
-            .domain([0, xMax])
-            .range([0,  this.state.width]);
+                    .domain([0, xMax])
+                    .range([0, this.state.width]);
 
         const yScale = d3.scaleBand()
-            .domain(barChartData.map(d => d.genre))
-            .rangeRound([0,  this.state.height])
-            .paddingInner(.25);
-
+                    .domain(revenueData.map(d => this.cutText(d.title)))
+                    .rangeRound([0, this.state.height])
+                    .paddingInner(.25);
 
         // Draw Header 
-     
+        const header = svg.append('g')
+                    .attr('class', 'bar-header')
+                    .attr('transform', `translate(0, ${-this.state.margin.top / 2})`)
+                    .append('text');
+
+        const headline = header.append('tspan').text('Total Revenue by Title in $US');
+
+        header.append('tspan')
+                    .text('Top 15 Films, 2000-2009')
+                    .attr('x', 0)
+                    .attr('dy', '1.5em')
+                    .attr('font-size', '0.8em')
+                    .attr('fill', '#555');
 
         // Draw Bars
-        
+        const bars = svg
+                    .selectAll('.bar')
+                    .data(revenueData)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'bar')
+                    .attr('y', d => yScale(this.cutText(d.title)))
+                    .attr('width', d => xScale(d.revenue))
+                    .attr('height', yScale.bandwidth())
+                    .style('fill', 'dodgerblue');
+
+        function formatTicks(d) { 
+            return d3.format('~s')(d)
+                    .replace('M', ' mil')
+                    .replace('G', ' bil')
+                    .replace('T', ' tril')
+        }
 
         // Draw Axes
+        const xAxis = d3.axisTop(xScale)
+                    .tickFormat(formatTicks)
+                    .tickSizeInner(-this.state.height)
+                    .tickSizeOuter(0);
+
+        const xAxisDraw = svg.append('g')
+                    .attr('class', 'x axis')
+                    .call(xAxis);
         
+        const yAxis = d3.axisLeft(yScale)
+                    .tickSize(0);
+
+        const yAxisDraw = svg.append('g')
+                    .attr('class', 'y axis')
+                    .call(yAxis);
+
+        yAxisDraw.selectAll('text')
+                    .attr('dx', '-0.6em')
     }
 
     handleClick(event) {
@@ -161,16 +205,4 @@ export default class UpdateBarChart extends Component {
             );
         });
     }
-
-    // get the data we will use for the bar chart
-    prepareBarChartData(movieData) {
-        const dataMap = d3.nest()
-                        .key(d => d.genre)
-                        .rollup(v => d3.sum(v, leaf => leaf.revenue))
-                        .entries(movieData);
-
-        const dataArray = Array.from(dataMap, d=> ({genre: d.key, revenue:d.value}))
-
-        return dataArray;
-    }    
 }
