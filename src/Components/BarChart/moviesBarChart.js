@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moviesCsv from '../assets/data/movies.csv';
+import moviesCsv from '../../assets/data/movies.csv';
 import * as d3 from 'd3';
 
 export default class MovieBarChart extends Component {
