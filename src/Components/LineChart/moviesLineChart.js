@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moviesCsv from '../../assets/data/movies.csv';
 import * as d3 from 'd3';
+import './lineChart.scss';
 
 export default class MovieLineChart extends Component {
 

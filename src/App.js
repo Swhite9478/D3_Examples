@@ -9,11 +9,14 @@ import Fruits from './Components/Fruit/Fruits';
 import Transition from './Components/Transition/Transition';
 import UpdateMovieBarChart from './Components/BarChart/updateBarChart';
 import ToolTipBarChart from './Components/BarChart/toolTipBarChart';
+import MoviesLineChartBrush from './Components/LineChart/moviesLineChartBrush';
+import MovieLineChartBrush from './Components/LineChart/moviesLineChartBrush';
 
 function App() {
   return (
     <div className="App">
-      <ToolTipBarChart />
+      <MovieLineChartBrush />
+      {/* <ToolTipBarChart /> */}
       {/* <UpdateMovieBarChart /> */}
       {/* <Lollipop />
       <MovieBarChart />

@@ -1,0 +1,43 @@
+svg {
+    border: 1px solid #bbb;
+}
+
+.scatter-plot-container {
+    float: left;
+}
+
+.selected-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+    border: 1px solid #bbb;
+}
+
+.selected-header {
+    background: #f0f0f0;
+    color: #777;
+    padding:0.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid black;
+    font-weight: bold;
+}
+
+.selected-body {
+    overflow: auto;
+    font-size: 0.8em;
+    cursor: default;
+}
+
+.axis .domain {
+  stroke: #bbb;
+}
+
+.axis .tick line {
+  stroke: #bbb;
+  stroke-width: 0.5;
+  stroke-dasharray: 4, 2;
+}
+
+.x line {
+  stroke: black;
+}
