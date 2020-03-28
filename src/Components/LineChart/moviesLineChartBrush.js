@@ -193,6 +193,64 @@ export default class MovieLineChartBrush extends Component {
 
             .style('fill-opacity', 0.7);
 
+            // Event handlers for selected elements
+            let selectedID;
+            function mouseover() {
+                selectedID = d3.select(this).data()[0].id;
+                d3.selectAll('.scatter')
+                    .filter(d => d.id === selectedID)
+                    .transition()
+                    .attr('r', 6)
+                    .attr('fill-opacity', 1)
+                    .style('fill', 'darkgreen');
+            }
+
+            function mouseout() {
+                selectedID = d3.select(this).data()[0].id;
+                d3.selectAll('.scatter')
+                    .filter(d => d.id === selectedID)
+                    .transition()
+                    .attr('r', 3)
+                    .attr('fill-opacity', 0.7)
+                    .style('fill', 'coral');
+            }
+
+            // Update Selected elements
+            function updateSelected(selected) {
+                d3.select('.selected-body')
+                    .selectAll('.selected-element')
+                    .data(selected, d => d.id)
+                    .join(
+                        enter => enter
+                        .append('p')
+                        .attr('class', 'selected-element')
+                        .html(
+                            d => `<span class="selected-title">${d.title}</span>, ${d.release_year
+                            } <br>budget: ${formatTicks(d.budget)} | revenue: ${formatTicks(d.revenue)}`
+                        )
+                        .on('mouseover', mouseover)
+                        .on('mouseout', mouseout)
+                        ,
+
+                        update => update,
+
+                        exit => exit.remove()
+                    )
+            }
+
+            // Highlight selected 
+            function highlightSelected(data) {
+                let selectedIds = data.map(d => d.id)
+                d3.selectAll('.scatter')
+                    .filter(d => selectedIds.includes(d.id))
+                    .style('fill', 'coral');
+
+                d3.selectAll('.scatter')
+                    .filter(d => !selectedIds.includes(d.id))
+                    .style('fill', 'dodgerblue')
+        
+            }
+
             // Brush Handler
             function brushed() {
                 if(d3.event.selection) {
@@ -204,7 +262,11 @@ export default class MovieLineChartBrush extends Component {
                             y0 <= yScale(d.revenue) &&
                             yScale(d.revenue) < y1
                     );
-                    console.log(selected);
+                    updateSelected(selected);
+                    highlightSelected(selected);
+                } else {
+                    updateSelected([]);
+                    highlightSelected([]);
                 }
             }
 
