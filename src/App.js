@@ -11,11 +11,13 @@ import UpdateMovieBarChart from './Components/BarChart/updateBarChart';
 import ToolTipBarChart from './Components/BarChart/toolTipBarChart';
 import MoviesLineChartBrush from './Components/LineChart/moviesLineChartBrush';
 import MovieLineChartBrush from './Components/LineChart/moviesLineChartBrush';
+import CirclePacker from './Components/CirclePacker/circlePacker';
 
 function App() {
   return (
     <div className="App">
-      <MovieLineChartBrush />
+      <CirclePacker />
+      {/* <MovieLineChartBrush /> */}
       {/* <ToolTipBarChart /> */}
       {/* <UpdateMovieBarChart /> */}
       {/* <Lollipop />
